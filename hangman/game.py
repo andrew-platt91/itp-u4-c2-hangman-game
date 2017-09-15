@@ -1,7 +1,7 @@
 from .exceptions import *
 
 # Complete with your own, just for fun :)
-LIST_OF_WORDS = []
+LIST_OF_WORDS = ['testing','project', 'functionaliy','oops', 'borked']
 
 
 def _get_random_word(list_of_words):
@@ -9,7 +9,14 @@ def _get_random_word(list_of_words):
 
 
 def _mask_word(word):
-    pass
+    if len(word) < 1:
+        raise InvalidWordException ("Invalid word used!")
+    
+    masked_word = ''
+    for letters in word:
+        print(letters)
+        masked_word += '*'
+    return masked_word
 
 
 def _uncover_word(answer_word, masked_word, character):
