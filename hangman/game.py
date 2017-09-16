@@ -25,18 +25,21 @@ def _mask_word(word):
 
 
 def _uncover_word(answer_word, masked_word, character):
+    # Raise an exception if character length not equal to 1
     if len(character) != 1:
         raise InvalidGuessedLetterException ('Invalid character Guessed')
-    
+    # Raise an exceptoin if answer_word is blank or if answer word and masked word length don't match
     if len(answer_word) < 1 or len(answer_word) != len(masked_word):
         raise InvalidWordException('Invalid word used!')
-
-    uncovered_word = list(masked_word) 
-    #uncovered_location = []
-    uncovered_location = [i for i, x in enumerate(answer_word.lower()) if x == character.lower()]
-    for location in uncovered_location:
-        uncovered_word[location] = character.lower()
-    return ''.join(uncovered_word)
+    #  Make a list out of the masked word so we can choose were to 
+    word_unmasked = list(masked_word) 
+    # get all Positons of the letter using list comprehension and enumerate
+    unmask_location = [index for index, letter in enumerate(answer_word.lower()) if letter == character.lower()]
+    # unmask characters found in unmasked_location through their location
+    for location in unmask_location:
+        word_unmasked[location] = character.lower()
+    # Join the list of unmasked words together
+    return ''.join(word_unmasked)
     
 def guess_letter(game, letter):
     #Ok This is big one. from what i can tell it needs to take the guessed letter
