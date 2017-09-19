@@ -9,14 +9,13 @@ def _get_random_word(list_of_words):
     try:
         random_word = list_of_words[randint(0,len(list_of_words)-1)]
     except:
-        # invalidlistofwordseexception should be InvalidListOfWordsException
-        raise InvalidListOfWordsException('invalid List of words')
+        raise InvalidListOfWordsException()
 
     return random_word
 
 def _mask_word(word):
     if len(word) < 1:
-        raise InvalidWordException ("Invalid word used!")
+        raise InvalidWordException ()
     
     masked_word = ''
     for letters in word:
@@ -49,42 +48,36 @@ def guess_letter(game, letter):
     #it needs to drop the number of guesses down if it the Miss exception is raised
     #although we mabe able to incorparate that into a miss exception function
     #regardless of all that it needs to append the guess to the 
-    
-    #lets start by breaking the two words into a list for comparison
-    answer_word_to_list = list(game['answer_word'])
-    masked_word_to_list = list(game['masked_word'])
+
     
     # Compare current masked word with the uncovered version if they're different
     # update game with most uncovered
-    if game['masked_word'] != _uncover_word(game['answer_word'], game['masked_word'], letter):
-        game['masked_word'] = _uncover_word(game['answer_word'], game['masked_word'], letter)
     
-    # If the masked word is the same as the uncovered word guess failed
+    if game['remaining_misses'] == 0 or game['answer_word'] == game['masked_word']:
+        raise GameFinishedException
+    
     else:
-        game['remaining_misses'] = game['remaining_misses'] - 1
-    
-    # When this was in the else it didn't add correct guesses to the list 
-    game['previous_guesses'].append(letter.lower())
-    
-    # calls GameLostException when remaining_misses is 0    
-    if game['remaining_misses'] == 0:
-        raise GameLostException("Game is lost")
-    
-    # Calls a GameWonException when masked word matches answer
-    if game['answer_word'] == game['masked_word']:
-        raise GameWonException('You have won')
-    
-    #Previous version
-    ## for each letter in the list let is the letter in the list
-    ##for individual_letters in answer_word_to_list:
-    ##    if individual_letters == letter:
-    ##        
-    ##        game['masked_word'] = _uncover_word(game['answer_word'], game['masked_word'], letter)
-    ##    else:
-    ##        game['remaining_misses'] = game['remaining_misses'] - 1
-    ##        game['previous_guesses'].append(letter)
-    
-    return game
+        if game['masked_word'] != _uncover_word(game['answer_word'], game['masked_word'], letter):
+            game['masked_word'] = _uncover_word(game['answer_word'], game['masked_word'], letter)
+        
+        # If the masked word is the same as the uncovered word guess failed
+        else:
+            game['remaining_misses'] = game['remaining_misses'] - 1
+        
+        # When this was in the else it didn't add correct guesses to the list 
+        game['previous_guesses'].append(letter.lower())
+        
+        # calls GameLostException when remaining_misses is 0    
+        if game['remaining_misses'] == 0:
+            raise GameLostException()
+        
+        # Calls a GameWonException when masked word matches answer
+        if game['answer_word'] == game['masked_word']:
+            raise GameWonException()
+        
+        return game
+ 
+
 
 def start_new_game(list_of_words=None, number_of_guesses=5):
     if list_of_words is None:
